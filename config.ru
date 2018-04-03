@@ -2,5 +2,6 @@ require 'dotenv'
 Dotenv.load '.env'
 
 require './app/app'
+require 'sidekiq/web'
 
-run App
+run Rack::URLMap.new('/' => App, '/sidekiq' => Sidekiq::Web)

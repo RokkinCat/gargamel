@@ -16,3 +16,18 @@ namespace :db do
     end
   end
 end
+
+namespace :garg do
+  desc "Run daily stats"
+  task :daily do |t, args|
+    require 'dotenv'
+    Dotenv.load ".env"
+
+    require "sequel"
+    Sequel.connect(ENV.fetch("DATABASE_URL"))
+
+    require 'sidekiq'
+    require_relative './workers/repos_worker'
+    ReposWorker.perform_async({})
+  end
+end

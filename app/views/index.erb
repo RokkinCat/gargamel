@@ -11,6 +11,11 @@
       <div class="card-body">
         <%= chart %>
       </div>
+      <div class="card-body">
+        <form action="/github_repos/<%= github_repo.id %>/refresh" method="post">
+          <button type="submit" class="btn btn-primary">Manually Refresh Today&#39;s Data</button>
+        </form>
+      </div>
     </div>
   <% end %>
 
@@ -30,8 +35,8 @@
           <input type="text" class="form-control" name="repo_name" placeholder="Enter repo name">
         </div>
         <div class="form-group">
-          <label>GitHub API Token</label>
-          <input type="text" class="form-control" name="api_token" placeholder="Enter GitHub API Token">
+          <label>GitHub Access Token</label>
+          <input type="text" class="form-control" name="access_token" placeholder="Enter GitHub Access Token">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>

@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sidekiq'
 require 'chartkick'
 
 class App < Sinatra::Application
@@ -6,7 +7,8 @@ class App < Sinatra::Application
   configure do
     set :public_folder, File.dirname(__FILE__) + '/static'
 
-    require_relative '../db/config'
+    require_relative '../config/database'
+    require_relative './models/daily_stats'
     require_relative './models/github_repos'
     # autoload :GithubRepo, 'models/github_repos'
   end
@@ -15,11 +17,22 @@ class App < Sinatra::Application
     @datas = GithubRepo.all.map do |github_repo|
       {
         github_repo: github_repo,
-        chart: make_chart
+        chart: make_chart(github_repo)
       }
     end
 
     erb :index
+  end
+
+  post "/github_repos/:id/refresh" do
+    github_repo = GithubRepo[params[:id]]
+
+    puts "do: #{github_repo.id}"
+
+    require_relative '../workers/daily_stat_worker'
+    DailyStatWorker.perform_async({id: github_repo.id})
+
+    redirect "/"
   end
 
   post "/github_repos" do
@@ -27,25 +40,20 @@ class App < Sinatra::Application
     redirect "/"
   end
 
-  def make_chart
+  def make_chart(github_repo)
+    daily_stats = github_repo.daily_stats
+
+    pull_request_series = daily_stats.map do |daily_stat|
+      [daily_stat.date, daily_stat.pull_request_count]
+    end
+    issues_series = daily_stats.map do |daily_stat|
+      [daily_stat.date, daily_stat.issue_count]
+    end
+
     line_chart(
       [
-        {name: "Pull Requests", data:  [
-          ["3/1", 3],
-          ["3/2", 4],
-          ["3/3", 5],
-          ["3/4", 6],
-          ["3/5", 7],
-          ["3/6", 8]
-        ]},
-        {name: "Issues", data: [
-          ["3/1", 9],
-          ["3/2", 8],
-          ["3/3", 7],
-          ["3/4", 6],
-          ["3/5", 5],
-          ["3/6", 4]
-        ]}
+        {name: "Pull Requests", data:  pull_request_series},
+        {name: "Issues", data: issues_series}
       ], 
       adapter: "chartjs",
     )

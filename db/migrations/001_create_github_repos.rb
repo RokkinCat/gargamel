@@ -4,7 +4,9 @@ Sequel.migration do
       primary_key :id
       String :organization_name, null: false
       String :repo_name, null: false
-      String :api_token, null: false
+      String :access_token, null: false
+      DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
+      DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP
     end
   end
 
