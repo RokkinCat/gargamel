@@ -1,0 +1,32 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    chartkick (2.3.3)
+    dotenv (2.2.1)
+    mustermann (1.0.2)
+    pg (1.0.0)
+    rack (2.0.4)
+    rack-protection (2.0.1)
+      rack
+    rake (12.3.1)
+    sequel (5.7.0)
+    sinatra (2.0.1)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.1)
+      tilt (~> 2.0)
+    tilt (2.0.8)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  chartkick
+  dotenv
+  pg
+  rake
+  sequel
+  sinatra
+
+BUNDLED WITH
+   1.16.1
