@@ -6,11 +6,11 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { :size => 30 }
+  config.redis = { :size => ENV.fetch('REDIS_CONNECTIONS') }
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { :size => 30 }
+  config.redis = { :size => ENV.fetch('REDIS_CONNECTIONS') }
 end
 
 Dir[File.expand_path('../../workers/*.rb', __FILE__)].each { |file|require file }
