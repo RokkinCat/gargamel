@@ -10,6 +10,7 @@ class App < Sinatra::Application
     require_relative '../config/database'
     require_relative './models/daily_stats'
     require_relative './models/github_repos'
+    require_relative './models/issue_stats'
     # autoload :GithubRepo, 'models/github_repos'
   end
 
@@ -40,6 +41,15 @@ class App < Sinatra::Application
   post "/github_repos" do
     GithubRepo.create(params)
     redirect "/"
+  end
+
+  get "/issues" do
+    github_repos = GithubRepo.all
+    @issue_stats = github_repos.map do |github_repo|
+      github_repo.issue_stats
+    end.flatten
+
+    erb :issues
   end
 
   def make_all_chart(github_repos)

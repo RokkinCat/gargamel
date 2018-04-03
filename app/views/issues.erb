@@ -1,0 +1,38 @@
+<div class="container">
+  <table class="table" data-pagination="true" data-page-size="100" data-search="true" data-toggle="table">
+    <thead>
+      <tr>
+        <th data-sortable="true">Repo</th>
+        <th data-sortable="true">Issue</th>
+        <th data-sortable="true">Days Open</th>
+        <th data-sortable="true">Made by Team?</th>
+        <th data-sortable="true"># of Comments</th>
+        <th data-sortable="true"># of Team Comments</th>
+        <th data-sortable="true"># of Author Comments</th>
+        <th data-sortable="true"># of Days Since Author Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @issue_stats.each do |issue_stat| %>
+        <tr>
+          <td>
+            <a target="_blank" href="https://github.com/<%= issue_stat.github_repo.organization_name %>/<%= issue_stat.github_repo.repo_name %>">
+            <%= issue_stat.github_repo.organization_name %>/<%= issue_stat.github_repo.repo_name %>
+            </a>
+          </td>
+          <td>
+            <a target="_blank" href="https://github.com/<%= issue_stat.github_repo.organization_name %>/<%= issue_stat.github_repo.repo_name %>/issues/<%= issue_stat.issue_number %>">
+              <%= issue_stat.issue_number %>
+            </a>
+          </td>
+          <td><%= issue_stat.days_open %></td>
+          <td><%= issue_stat.is_core_contributor %></td>
+          <td><%= issue_stat.number_of_comments %></td>
+          <td><%= issue_stat.number_of_core_contributors_comments %></td>
+          <td><%= issue_stat.number_of_author_comments %></td>
+          <td><%= issue_stat.days_since_last_author_comment %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
