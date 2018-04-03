@@ -6,9 +6,10 @@ Sequel.migration do
       String :issue_count, null: false, default: 0
       String :pull_request_count, null: false, default: 0
       Date :date, default: Sequel::CURRENT_TIMESTAMP
-      index :date, unique: true
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
       DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP
+
+      unique [:github_repo_id, :date]
     end
   end
 
