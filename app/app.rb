@@ -21,7 +21,7 @@ class App < Sinatra::Application
   end
 
   get "/" do
-    @show_add_repo = ENV['SHOW_ADD_REPO'] == 'true'
+    @admin_mode = ENV['ADMIN_MODE'] == 'true'
 
     github_repos = GithubRepo.all
     @all_chart = make_all_chart(github_repos)

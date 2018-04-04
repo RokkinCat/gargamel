@@ -21,15 +21,17 @@
       <div class="card-body">
         <%= chart %>
       </div>
-      <div class="card-body">
-        <form action="/github_repos/<%= github_repo.id %>/refresh" method="post">
-          <button type="submit" class="btn btn-primary">Manually Refresh Today&#39;s Data</button>
-        </form>
-      </div>
+      <% if @admin_mode %>
+        <div class="card-body">
+          <form action="/github_repos/<%= github_repo.id %>/refresh" method="post">
+            <button type="submit" class="btn btn-primary">Manually Refresh Today&#39;s Data</button>
+          </form>
+        </div>
+      <% end %>
     </div>
   <% end %>
 
-  <% if @show_add_repo %>
+  <% if @admin_mode %>
     <div class="card card-chart" >
       <div class="card-body">
         <h5 class="card-title">Want to monitor a new repo?</h5>
