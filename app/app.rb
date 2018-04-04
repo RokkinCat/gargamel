@@ -4,6 +4,12 @@ require 'chartkick'
 
 class App < Sinatra::Application
 
+  if ENV['BASIC_AUTH_USERNAME'] && ENV['BASIC_AUTH_PASSWORD']
+    use Rack::Auth::Basic, "Protected Area" do |username, password|
+      username == ENV.fetch('BASIC_AUTH_USERNAME') && password == ENV.fetch('BASIC_AUTH_PASSWORD')
+    end
+  end
+
   configure do
     set :public_folder, File.dirname(__FILE__) + '/static'
 
@@ -15,6 +21,8 @@ class App < Sinatra::Application
   end
 
   get "/" do
+    @show_add_repo = ENV['SHOW_ADD_REPO'] == 'true'
+
     github_repos = GithubRepo.all
     @all_chart = make_all_chart(github_repos)
     @datas = github_repos.map do |github_repo|

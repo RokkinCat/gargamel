@@ -29,28 +29,30 @@
     </div>
   <% end %>
 
-  <div class="card card-chart" >
-    <div class="card-body">
-      <h5 class="card-title">Want to monitor a new repo?</h5>
-      <h6 class="card-subtitle mb-2 text-muted">Enter information below</h6>
+  <% if @show_add_repo %>
+    <div class="card card-chart" >
+      <div class="card-body">
+        <h5 class="card-title">Want to monitor a new repo?</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Enter information below</h6>
+      </div>
+      <div class="card-body">
+        <form action="/github_repos" method="post">
+          <div class="form-group">
+            <label>Organization Name</label>
+            <input type="text" class="form-control" name="organization_name" placeholder="Enter organization name">
+          </div>
+          <div class="form-group">
+            <label>Repo Name</label>
+            <input type="text" class="form-control" name="repo_name" placeholder="Enter repo name">
+          </div>
+          <div class="form-group">
+            <label>GitHub Access Token</label>
+            <input type="text" class="form-control" name="access_token" placeholder="Enter GitHub Access Token">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
     </div>
-    <div class="card-body">
-      <form action="/github_repos" method="post">
-        <div class="form-group">
-          <label>Organization Name</label>
-          <input type="text" class="form-control" name="organization_name" placeholder="Enter organization name">
-        </div>
-        <div class="form-group">
-          <label>Repo Name</label>
-          <input type="text" class="form-control" name="repo_name" placeholder="Enter repo name">
-        </div>
-        <div class="form-group">
-          <label>GitHub Access Token</label>
-          <input type="text" class="form-control" name="access_token" placeholder="Enter GitHub Access Token">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
-  </div>
+  <% end %>
 
 </div>
