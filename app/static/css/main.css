@@ -14,3 +14,7 @@ table.table.garg-table {
   background-color: #FCFCFC;
   font-size: 14px;
 }
+
+div.fixed-table-body {
+  background-color: #FCFCFC;
+}
