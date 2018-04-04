@@ -5,3 +5,12 @@ body {
 .card-chart {
   margin: 10px;
 }
+
+.card-issue-header {
+  margin: 10px 0px;
+}
+
+table.table.garg-table {
+  background-color: #FCFCFC;
+  font-size: 14px;
+}
