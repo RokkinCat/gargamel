@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sidekiq'
 require 'chartkick'
+require 'octokit'
 
 class App < Sinatra::Application
 
@@ -13,14 +14,84 @@ class App < Sinatra::Application
   configure do
     set :public_folder, File.dirname(__FILE__) + '/static'
 
+    enable :sessions
+
     require_relative '../config/database'
+    require_relative './models/users'
     require_relative './models/daily_stats'
     require_relative './models/github_repos'
     require_relative './models/issue_stats'
-    # autoload :GithubRepo, 'models/github_repos'
+  end
+
+  before do
+    @current_user = current_user
+  end
+
+  def current_user
+    user_id = session[:user_id]
+    return nil unless user_id
+    return User[user_id]
+  end
+
+  def protected!
+    redirect '/' unless @current_user
   end
 
   get "/" do
+    erb :index
+  end
+
+  get "/login" do
+    erb :login
+  end
+
+  get "/logout" do
+    session.clear
+    redirect '/'
+  end
+
+  get "/github/login" do
+    client = Octokit::Client.new
+    url = client.authorize_url(ENV.fetch('GITHUB_CLIENT_ID'), :scope => 'user:email')
+    redirect url
+  end
+
+  get '/github/callback' do
+    session_code = request.env['rack.request.query_hash']['code']
+    result = Octokit.exchange_code_for_token(session_code, ENV.fetch('GITHUB_CLIENT_ID'), ENV.fetch('GITHUB_CLIENT_SECRET'))
+    access_token = result[:access_token]
+
+    client = Octokit::Client.new(:access_token => access_token)
+    github_user = client.user
+    unless github_user
+      redirect '/dashboard'
+    end
+    
+    github_username = github_user.login
+    github_id = github_user.id
+    github_avatar_url = github_user.avatar_url
+
+    user = User.where(github_id: github_id).first
+    if user
+      user.github_username = github_username
+      user.github_avatar_url = github_avatar_url
+      user.save
+    else
+      user = User.create(
+        github_id: github_id,
+        github_username: github_username,
+        github_avatar_url: github_avatar_url
+      )
+    end
+
+    session[:user_id] = user.id
+  
+    redirect '/dashboard'
+  end
+
+  get "/dashboard" do
+    protected!
+
     @admin_mode = ENV['ADMIN_MODE'] == 'true'
 
     github_repos = GithubRepo.all
@@ -32,26 +103,27 @@ class App < Sinatra::Application
       }
     end
 
-    erb :index
+    erb :dashboard
   end
 
   post "/github_repos/:id/refresh" do
+    protected!
     github_repo = GithubRepo[params[:id]]
-
-    puts "do: #{github_repo.id}"
 
     require_relative '../workers/daily_stat_worker'
     DailyStatWorker.perform_async({id: github_repo.id})
 
-    redirect "/"
+    redirect "/dashboard"
   end
 
   post "/github_repos" do
+    protected!
     GithubRepo.create(params)
-    redirect "/"
+    redirect "/dashboard"
   end
 
   get "/issues" do
+    protected!
     github_repos = GithubRepo.all
     @issue_stats = github_repos.map do |github_repo|
       github_repo.issue_stats
