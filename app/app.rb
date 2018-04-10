@@ -42,12 +42,6 @@ class App < Sinatra::Application
 
     redirect "/dashboard"
   end
-
-  post "/github_repos" do
-    protected!
-    GithubRepo.create(params)
-    redirect "/dashboard"
-  end
 end
 
 require_relative '../config/database'

@@ -2,11 +2,20 @@ require 'chartkick'
 
 class App < Sinatra::Application
   get "/dashboard" do
+    teams = @current_user.teams
+    if teams.first
+      redirect "/teams/#{teams.first.id}"
+    else
+      redirect "/teams"
+    end
+  end
+
+  get "/teams/:id" do
     protected!
 
-    @admin_mode = ENV['ADMIN_MODE'] == 'true'
+    @team = @current_user.teams_dataset.where(id: params[:id]).first
 
-    github_repos = GithubRepo.all
+    github_repos = @team.github_repos
     @all_chart = make_all_chart(github_repos)
     @datas = github_repos.map do |github_repo|
       {
@@ -15,7 +24,7 @@ class App < Sinatra::Application
       }
     end
 
-    erb :dashboard
+    erb :team_dashboard
   end
 
   def make_all_chart(github_repos)

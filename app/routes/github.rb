@@ -1,7 +1,7 @@
 class App < Sinatra::Application
   get "/github/login" do
     client = Octokit::Client.new
-    url = client.authorize_url(ENV.fetch('GITHUB_CLIENT_ID'), :scope => 'user:email')
+    url = client.authorize_url(ENV.fetch('GITHUB_CLIENT_ID'), :scope => 'user,repo')
     redirect url
   end
 
@@ -24,12 +24,14 @@ class App < Sinatra::Application
     if user
       user.github_username = github_username
       user.github_avatar_url = github_avatar_url
+      user.github_oauth_access_token = access_token
       user.save
     else
       user = User.create(
         github_id: github_id,
         github_username: github_username,
-        github_avatar_url: github_avatar_url
+        github_avatar_url: github_avatar_url,
+        github_oauth_access_token: access_token
       )
     end
 

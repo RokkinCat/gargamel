@@ -1,4 +1,5 @@
 require_relative 'auth'
-require_relative 'dashboard'
 require_relative 'github'
 require_relative 'issues'
+require_relative 'teams_dashboard'
+require_relative 'teams'

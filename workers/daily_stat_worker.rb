@@ -7,9 +7,8 @@ class DailyStatWorker
 
     github_repo = GithubRepo[hash['id']]
     repo_slug = "#{github_repo.organization_name}/#{github_repo.repo_name}"
-    access_token = github_repo.access_token
 
-    client = Octokit::Client.new(:access_token => access_token)
+    client = github_repo.team.user.github_client
     client.auto_paginate = true
 
     issues = client.issues(repo_slug)

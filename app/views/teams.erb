@@ -1,0 +1,31 @@
+<div class="container">
+
+  <% @teams.each do |team| %>
+    <div class="card card-chart" >
+      <div class="card-body">
+        <h5 class="card-title"><%= team.name %></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Daily Stats</h6>
+      </div>
+      <div class="card-body">
+        Something
+      </div>
+    </div>
+  <% end %>
+
+  <div class="card card-chart" >
+    <div class="card-body">
+      <h5 class="card-title">Want to add another team?</h5>
+      <h6 class="card-subtitle mb-2 text-muted">Enter information below</h6>
+    </div>
+    <div class="card-body">
+      <form action="/teams" method="post">
+        <div class="form-group">
+          <label>Team Name</label>
+          <input type="text" class="form-control" name="name" placeholder="Enter team name">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+</div>

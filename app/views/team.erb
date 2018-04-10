@@ -1,0 +1,35 @@
+<div class="container">
+
+  <% @github_repos.each do |github_repo| %>
+    <div class="card card-chart" >
+      <div class="card-body">
+        <h5 class="card-title"><%= github_repo.organization_name %>/<%= github_repo.repo_name %></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Something</h6>
+      </div>
+      <div class="card-body">
+        Something
+      </div>
+    </div>
+  <% end %>
+
+  <div class="card card-chart" >
+    <div class="card-body">
+      <h5 class="card-title">Want to monitor a new repo?</h5>
+      <h6 class="card-subtitle mb-2 text-muted">Select repo below</h6>
+    </div>
+    <div class="card-body">
+      <form action="github_repos" method="post">
+        <div class="form-group">
+        <label for="repoNameSelect">Repo</label>
+        <select class="form-control" id="repoNameSelect" name="full_repo_name">
+          <% @repo_names.each do |repo_name| %>
+            <option><%= repo_name %></option>
+          <% end %>
+        </select>
+      </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+</div>
