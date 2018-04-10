@@ -1,7 +1,4 @@
 require 'octokit'
-require_relative '../app/models/daily_stats'
-require_relative '../app/models/github_repos'
-require_relative '../app/models/issue_stats'
 
 class IssueStatWorker
   include Sidekiq::Worker

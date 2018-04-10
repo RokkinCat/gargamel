@@ -1,5 +1,6 @@
 require 'sidekiq'
 require_relative './database'
+require_relative '../app/models/init'
 
 Sidekiq.configure_client do |config|
   config.redis = { url: ENV.fetch('REDIS_URL') }
