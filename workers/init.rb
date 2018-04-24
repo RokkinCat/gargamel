@@ -1,3 +1,6 @@
 require_relative 'daily_stat_worker'
 require_relative 'issue_stat_worker'
 require_relative 'repos_worker'
+require_relative 'issues_worker'
+require_relative 'comments_worker'
+require_relative 'backfill_stats_worker'

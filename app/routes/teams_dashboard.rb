@@ -2,9 +2,11 @@ require 'chartkick'
 
 class App < Sinatra::Application
   get "/dashboard" do
-    teams = @current_user.teams
-    if teams.first
-      redirect "/teams/#{teams.first.id}"
+    protected!
+
+    team = get_team!
+    if team
+      redirect "/teams/#{team.id}"
     else
       redirect "/teams"
     end
@@ -13,7 +15,8 @@ class App < Sinatra::Application
   get "/teams/:id" do
     protected!
 
-    @team = @current_user.teams_dataset.where(id: params[:id]).first
+    @teams = @current_user.teams
+    @team = select_team!(params[:id])
 
     github_repos = @team.github_repos
     @all_chart = make_all_chart(github_repos)

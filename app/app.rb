@@ -30,6 +30,21 @@ class App < Sinatra::Application
     redirect '/' unless @current_user
   end
 
+  def select_team!(team_id)
+    team = @current_user.teams_dataset.where(id: params[:id]).first
+    session[:team_id] = team.id
+    puts "set session[:team_id]: #{session[:team_id]}"
+    team
+  end
+
+  def get_team!
+    puts "get session[:team_id]: #{session[:team_id]}"
+    team = @current_user.teams_dataset.where(id: session[:team_id]).first if session[:team_id]
+    team = @current_user.teams.first unless team
+
+    team
+  end
+
   get "/" do
     erb :index
   end

@@ -1,6 +1,7 @@
 require 'octokit'
 require 'sequel'
 class User < Sequel::Model
+  plugin :timestamps
   one_to_many :teams
 
   def github_client

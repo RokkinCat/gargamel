@@ -1,5 +1,16 @@
 <div class="container">
 
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <%= @team.name %>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <% @teams.each do |team| %>
+        <a class="dropdown-item" href="/teams/<%= team.id %>/issues"><%= team.name %></a>
+      <% end %>
+    </div>
+  </div>
+
   <div class="card card-issue-header" >
     <div class="card-body">
       <h5 class="card-title">Find important issues that matter</h5>

@@ -2,8 +2,12 @@ body {
   background-color: #F0F0F0;
 }
 
+.container {
+  padding-top: 20px;
+}
+
 .card-chart {
-  margin: 10px;
+  margin: 10px 0px;
 }
 
 .card-issue-header {

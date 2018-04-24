@@ -1,8 +1,10 @@
 class App < Sinatra::Application
   get "/issues" do
-    teams = @current_user.teams
-    if teams.first
-      redirect "/teams/#{teams.first.id}/issues"
+    protected!
+
+    team = get_team!
+    if team
+      redirect "/teams/#{team.id}/issues"
     else
       redirect "/teams"
     end
@@ -10,6 +12,9 @@ class App < Sinatra::Application
 
   get "/teams/:id/issues" do
     protected!
+
+    @teams = @current_user.teams
+    @team = select_team!(params[:id])
 
     @team = @current_user.teams_dataset.where(id: params[:id]).first
     github_repos = @team.github_repos

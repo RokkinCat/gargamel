@@ -17,4 +17,8 @@ gem "chartkick"
 # Worker
 gem "sidekiq"
 
+# Ef this
+gem "activesupport"
+
 gem "rake"
+gem "racksh"

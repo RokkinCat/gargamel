@@ -1,6 +1,5 @@
 require 'sequel'
-class DailyStat < Sequel::Model
-  plugin :timestamps
+class GithubIssue < Sequel::Model
   many_to_one :github_repo
 
   def self.insert_conflict(args)

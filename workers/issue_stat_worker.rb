@@ -4,57 +4,50 @@ class IssueStatWorker
   include Sidekiq::Worker
 
   def perform(hash)
-    github_repo = GithubRepo[hash['id']]
+    github_issue = GithubIssue[hash['id']]
+    github_repo = github_issue.github_repo
     repo_slug = "#{github_repo.organization_name}/#{github_repo.repo_name}"
 
     client = github_repo.team.user.github_client
     client.auto_paginate = true
 
-    issues = client.issues(repo_slug)
-    pull_requests = issues.select do |issue|
-      !issue.pull_request.nil?
-    end
+    issue_hash = fetch_issue_stats(client, repo_slug, github_issue)
+    issue_hash[:github_repo] = github_repo
 
-    issues_stat_hashes = issues.map do |issue|
-      fetch_issue_stats(client, repo_slug, issue)
-    end
+    puts issue_hash
 
-    github_repo.issue_stats_dataset.delete
-    
-    issues_stat_hashes.each do |issue_hash|
-      issue_hash[:github_repo] = github_repo
-      IssueStat.create(issue_hash)
-    end
+    # Need to upsert
+    # IssueStat.create(issue_hash)
 
   end
 
   def fetch_issue_stats(client, repo, issue)
-    user_login = issue[:user][:login]
-    labels = issue[:labels]
-    number_of_comments = issue[:comments]
-    created_at = issue[:created_at]
-    author_association = issue[:author_association]
-    days_open = ((Time.new - created_at) / (60 * 60 * 24)).to_i
+    user_login = issue.author_login
+    labels = issue.labels
+    number_of_comments = issue.comment_count
+    created_at = issue.created_at
+    author_association = issue.author_association
+    days_open = ((Time.new - created_at).to_f / (60 * 60 * 24)).to_i
   
     # Get comment stats
-    comment_users_stats, number_of_core_contributors_commented = fetch_comments_stats(client, repo, issue)
-    author_comments_stats = comment_users_stats[user_login] || {}
+    # comment_users_stats, number_of_core_contributors_commented = fetch_comments_stats(client, repo, issue)
+    # author_comments_stats = comment_users_stats[user_login] || {}
   
     stats = {
-      issue_number: issue.number,
+      issue_number: issue.issue_number,
       days_open: days_open,
       is_core_contributor: author_association == "OWNER" || author_association == "MEMBER",
       number_of_comments: number_of_comments,
-      number_of_core_contributors_comments: number_of_core_contributors_commented,
-      number_of_author_comments: author_comments_stats[:number_of_comments] || 0,
-      days_since_last_author_comment: author_comments_stats[:days_since_last_comment] || 0
+      # number_of_core_contributors_comments: number_of_core_contributors_commented,
+      # number_of_author_comments: author_comments_stats[:number_of_comments] || 0,
+      # days_since_last_author_comment: author_comments_stats[:days_since_last_comment] || 0
     }
   
     stats
   end
   
   def fetch_comments_stats(client, repo, issue)
-    comments = client.issue_comments(repo, issue.number)
+    comments = client.issue_comments(repo, issue.issue_number)
   
     users_stats = {}
   
